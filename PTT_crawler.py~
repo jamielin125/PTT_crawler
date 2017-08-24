@@ -5,12 +5,8 @@ from multiprocessing import Pool
 import time
 import os
 import re
-import sys
 
-Board = 'Beauty'
-ParsingPage = 1
-INDEX_URL = 'https://www.ptt.cc/bbs/' + Board + '/index.html'
-
+INDEX_URL = 'https://www.ptt.cc/bbs/Beauty/index.html'
 
 
 def get_postslist(url):
@@ -90,30 +86,24 @@ def save(img_urls, title):
 
 
 
-if __name__ == "__main__":
-	Board = str(sys.argv[1])
-	ParsingPage = int(sys.argv[2])
-	start_time = time.time()
-	print('Start parsing ['+ Board +']....')
-	posts_meta = get_page_meta(ParsingPage)
-	articles = get_artilces(posts_meta)
-	print('total spend: %f seconds' % (time.time() - start_time))
 
-	for posts, content in zip(posts_meta, articles):
-		print('{0} {1} {2}, total {3} words'.format(posts['date'], posts['author'], posts['title'], len(content)))
-		# os.makedirs(posts['title'])
+start_time = time.time()
 
-		url = urllib.parse.urljoin(INDEX_URL, posts['link'])
-		response = requests.get(url)
-		imgs = parse(response.text)
-		save(imgs, posts['title'])
+posts_meta = get_page_meta(2)   # 1 page
+# print(posts_meta)
+articles = get_artilces(posts_meta)
+
+print('total spend: %f seconds' % (time.time() - start_time))
 
 
+for posts, content in zip(posts_meta, articles):
+	print('{0} {1} {2}, total {3} words'.format(posts['date'], posts['author'], posts['title'], len(content)))
+	# os.makedirs(posts['title'])
 
-
-
-
-
+	url = urllib.parse.urljoin(INDEX_URL, posts['link'])
+	response = requests.get(url)
+	imgs = parse(response.text)
+	save(imgs, posts['title'])
 
 
 
